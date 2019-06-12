@@ -1,7 +1,4 @@
 %guilherme moreira rodrigues UFPB 20160105205
-
-
-
 function [angleKF, biasKF, rateKF, P_, K, y] = fcn(dt, Q_angle, Q_bias, R_measure, newRate, newAngle)
 
 
@@ -17,12 +14,17 @@ biasKF = 0.0;  %Redefine bias
 rateKF = newRate - biasKF;
 
 persistent angle;
-angle = angle + (dt * rateKF); 
+if isempty(angle)
+angle = 0;
+else angle = angle + (dt * rateKF); 
+end
 angleKF = angle;
 
 %atualiza a matriz de covariancia da estimativa de erro (projeta a covariancia de erro do estado a frente)
 persistent P;
-P = A*P*A' + Q;
+if isempty(P);P = [0 0 ; 0 0]; 
+else P = A*P*A' + Q;
+end
 P_ = P
 
 %equações discretas de atualização de medição do filtro de kalman (Calcula o ganho de kalman)
